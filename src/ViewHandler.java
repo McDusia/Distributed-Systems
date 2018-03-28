@@ -2,9 +2,7 @@ import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.MergeView;
 import org.jgroups.View;
-
 import java.util.List;
-import java.util.Vector;
 
 public class ViewHandler extends Thread{
 

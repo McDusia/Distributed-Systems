@@ -47,7 +47,6 @@ public class DistributedMap implements SimpleStringMap, IMap{
     private static void handleView(JChannel channel, View new_view) {
         if(new_view instanceof MergeView) {
             ViewHandler handler=new ViewHandler(channel, (MergeView)new_view);
-            // requires separate thread as we don't want to block JGroups
             handler.start();
         }
     }
@@ -57,28 +56,23 @@ public class DistributedMap implements SimpleStringMap, IMap{
             @Override
             public void viewAccepted(View view) {
                 //super.viewAccepted(view);
-                //System.out.println(view.toString());
                 handleView(channel, view);
 
             }
 
             public void receive(Message msg) {
-                /*System.out.println("received msg from "
-                        + msg.getSrc() + ": "
-                        + msg.getObject());*/
                 String operation = msg.getObject().toString();
                 updateMap(operation);
             }
+
             public void getState(OutputStream out){
 
                 synchronized(map) {
-                    //System.out.println("sending state");
                     try {
                         Util.objectToStream(map, new DataOutputStream(out));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    //System.out.println("state sent");
                 }
 
             }
@@ -136,11 +130,7 @@ public class DistributedMap implements SimpleStringMap, IMap{
 
     @Override
     public String put(String key, String value) {
-
-        //uspójnianie
         String result = map.put(key, value);
-
-
         try {
             String operation = "PUT "+ key +" "+ value;
 
@@ -176,10 +166,8 @@ public class DistributedMap implements SimpleStringMap, IMap{
     }
 
     private void updateMap(String operation) {
-
         String[] splitedOperation = operation.split(" ");
         parseOperation(splitedOperation, this.map);
-        //System.out.println(map.toString());
     }
 
     private void parseOperation(String[] operation, Map<String, String> map) {
