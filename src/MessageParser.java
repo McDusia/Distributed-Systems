@@ -37,7 +37,7 @@ public class MessageParser {
                     System.out.println("There is not an element with such key in the map.");
                 }
             }
-        } else  if (operation[0].equals("DISPLAY")){
+        } else  if (operation[0].equalsIgnoreCase("DISPLAY")){
             System.out.println(map.toString());
         } else {
             System.out.println("Wrong instruction");

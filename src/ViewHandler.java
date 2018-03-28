@@ -25,6 +25,7 @@ public class ViewHandler extends Thread{
                 channel.getState(null, 30000);
             }
             catch(Exception ex) {
+                ex.printStackTrace();
             }
         }
         else {

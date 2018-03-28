@@ -30,7 +30,7 @@ public class DistributedMap implements SimpleStringMap, IMap{
                 .addProtocol(new FD_ALL()
                         .setValue("timeout", 12000)
                         .setValue("interval", 3000))
-                .addProtocol(new VERIFY_SUSPECT())
+//                .addProtocol(new VERIFY_SUSPECT())
                 .addProtocol(new BARRIER())
                 .addProtocol(new NAKACK2())
                 .addProtocol(new UNICAST3())
