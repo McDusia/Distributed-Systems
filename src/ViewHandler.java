@@ -22,7 +22,7 @@ public class ViewHandler extends Thread{
             System.out.println("Not member of the new primary partition ("
                     + tmp_view + "), will re-acquire the state");
             try {
-                channel.getState(null, 30000);
+                channel.getState(tmp_view.getCoord(), 30000);
             }
             catch(Exception ex) {
                 ex.printStackTrace();

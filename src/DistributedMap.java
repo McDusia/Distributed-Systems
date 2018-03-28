@@ -39,7 +39,9 @@ public class DistributedMap implements SimpleStringMap, IMap{
                 .addProtocol(new UFC())
                 .addProtocol(new MFC())
                 .addProtocol(new STATE_TRANSFER())
-                .addProtocol(new FRAG2());
+                .addProtocol(new FRAG2())
+                .addProtocol(new SEQUENCER());
+                //.addProtocol(new FLUSH());
 
         stack.init();
     }

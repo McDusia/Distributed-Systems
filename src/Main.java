@@ -5,6 +5,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+
+
         BufferedReader br = null;
         DistributedMap map = new DistributedMap("channel_0");
         map.put("giraffe", "George");
@@ -19,6 +21,11 @@ public class Main {
         }
 
         try {
+            File file = new File("err.txt");
+            FileOutputStream fos = new FileOutputStream(file);
+            PrintStream ps = new PrintStream(fos);
+            System.setErr(ps);
+
             br = new BufferedReader(new InputStreamReader(System.in));
             while (true) {
                 System.out.print("Enter something : \n");
