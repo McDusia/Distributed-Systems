@@ -13,7 +13,7 @@ import org.jgroups.protocols.pbcast.STABLE;
 import org.jgroups.util.Util;
 
 
-public class DistributedMap implements SimpleStringMap, IMap{
+public class DistributedMap implements SimpleStringMap {
 
     private Map<String, String> map = new HashMap<>();
     private JChannel channel;
@@ -30,7 +30,6 @@ public class DistributedMap implements SimpleStringMap, IMap{
                 .addProtocol(new FD_ALL()
                         .setValue("timeout", 12000)
                         .setValue("interval", 3000))
-//                .addProtocol(new VERIFY_SUSPECT())
                 .addProtocol(new BARRIER())
                 .addProtocol(new NAKACK2())
                 .addProtocol(new UNICAST3())
@@ -57,9 +56,7 @@ public class DistributedMap implements SimpleStringMap, IMap{
         channel.setReceiver(new ReceiverAdapter() {
             @Override
             public void viewAccepted(View view) {
-                //super.viewAccepted(view);
                 handleView(channel, view);
-
             }
 
             public void receive(Message msg) {

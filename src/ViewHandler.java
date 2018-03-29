@@ -6,8 +6,8 @@ import java.util.List;
 
 public class ViewHandler extends Thread{
 
-    JChannel channel;
-    MergeView view;
+    private JChannel channel;
+    private MergeView view;
 
     ViewHandler(JChannel ch, MergeView view) {
         this.channel =ch;
@@ -16,8 +16,8 @@ public class ViewHandler extends Thread{
 
     public void run() {
         List<View> subgroups= view.getSubgroups();
-        View tmp_view=subgroups.get(0);//firstElement(); // picks the first
-        Address local_addr= channel.getAddress();//.getLocalAddress();
+        View tmp_view=subgroups.get(0);
+        Address local_addr= channel.getAddress();
         if(!tmp_view.getMembers().contains(local_addr)) {
             System.out.println("Not member of the new primary partition ("
                     + tmp_view + "), will re-acquire the state");
@@ -33,6 +33,5 @@ public class ViewHandler extends Thread{
                     + tmp_view + "), will do nothing");
         }
     }
-
 
 }
