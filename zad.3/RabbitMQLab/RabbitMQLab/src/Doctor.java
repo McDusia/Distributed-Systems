@@ -23,28 +23,14 @@ public class Doctor {
 
         // queue & bind
         String callbackQueueName = channel.queueDeclare().getQueue();
-        String forInfo = channel.queueDeclare().getQueue();
-        channel.queueBind(forInfo, EXCHANGE_NAME, "info");
+        String queueForInfo = channel.queueDeclare().getQueue();
+        channel.queueBind(queueForInfo, EXCHANGE_NAME, "info");
         final String corrId = UUID.randomUUID().toString();
         System.out.println("created callback queue: " + callbackQueueName);
 
         // consumer (message handling)
-        Consumer consumer = new DefaultConsumer(channel) {
-            @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
-                                       byte[] body) throws IOException {
-                if(properties.getCorrelationId().equals(corrId)){
-                    String message = new String(body, "UTF-8");
-                    System.out.println("Received: " + message);
-                }
-            }
-        };
-
-        System.out.println("Waiting for messages...");
-        channel.basicConsume(callbackQueueName, true, consumer);
-        Consumer consumer3 = createConsumer2(channel, EXCHANGE_NAME);
-
-        channel.basicConsume(forInfo, false, consumer3);
+        channel.basicConsume(callbackQueueName, true, createConsumer(channel, corrId));
+        channel.basicConsume(queueForInfo, false, createConsumerForInfo(channel));
 
         while (true) {
 
@@ -71,7 +57,6 @@ public class Doctor {
                         .correlationId(corrId)
                         .replyTo(callbackQueueName)
                         .build(), msg.getBytes("UTF-8"));
-                //channel.basicPublish(EXCHANGE_NAME, key, null, msg.getBytes("UTF-8"));
 
                 System.out.println("Sent: type - " +testType + ", name - " + name);
 
@@ -88,7 +73,20 @@ public class Doctor {
         return false;
     }
 
-    private static Consumer createConsumer2(Channel channel, String EXCHANGE_NAME) {
+    private static Consumer createConsumer(Channel channel, String corrId) {
+        return new DefaultConsumer(channel) {
+            @Override
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
+                                       byte[] body) throws IOException {
+                if(properties.getCorrelationId().equals(corrId)){
+                    String message = new String(body, "UTF-8");
+                    System.out.println("Received: " + message);
+                }
+            }
+        };
+    }
+
+    private static Consumer createConsumerForInfo(Channel channel) {
         return new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
@@ -100,4 +98,6 @@ public class Doctor {
             }
         };
     }
+
+
 }
