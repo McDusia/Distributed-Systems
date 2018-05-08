@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component jdk="1.8" jdk_type="JavaSDK">
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<levels>
+		<level name="io.grpc:grpc-protobuf:1.11.0" value="project"/>
+		<level name="io.grpc:grpc-stub:1.11.0" value="project"/>
+		<level name="io.grpc:grpc-netty:1.11.0" value="project"/>
+		<level name="com.google.guava:guava:25.0-jre" value="project"/>
+	</levels>
+</component>

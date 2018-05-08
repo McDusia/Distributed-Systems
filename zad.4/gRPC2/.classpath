@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="gen-java-calculator/sr/rpc/thrift"/>
+	<classpathentry kind="src" path="generated"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="/gRPC2/lib/protobuf-java-3.2.0.jar"/>
+	<classpathentry kind="lib" path="/gRPC2/lib/guava-19.0.jar"/>
+	<classpathentry kind="lib" path="/gRPC2/lib/grpc-context-1.0.3.jar"/>
+	<classpathentry kind="lib" path="/gRPC2/lib/grpc-netty-1.2.0.jar"/>
+	<classpathentry kind="lib" path="/gRPC2/lib/grpc-protobuf-1.2.0.jar"/>
+	<classpathentry kind="lib" path="/gRPC2/lib/grpc-stub-1.2.0.jar"/>
+	<classpathentry kind="lib" path="/gRPC2/lib/grpc-core-1.2.0.jar"/>
+	<classpathentry kind="lib" path="/gRPC2/lib/grpc-protobuf-lite-1.2.0.jar"/>
+	<classpathentry kind="lib" path="/gRPC2/lib/instrumentation-api-0.3.0.jar"/>
+	<classpathentry kind="lib" path="/gRPC2/lib/netty-all-4.1.8.Final.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Python 2.7 interpreter library"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/io.grpc:grpc-protobuf:1.11.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/io.grpc:grpc-stub:1.11.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/io.grpc:grpc-netty:1.11.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/com.google.guava:guava:25.0-jre"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/org.apache.thrift:libthrift:0.11.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/org.slf4j:slf4j-api:1.7.25"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
