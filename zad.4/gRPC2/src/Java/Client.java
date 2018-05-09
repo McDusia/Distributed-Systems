@@ -9,42 +9,114 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import thrift.bank.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+
 public class Client {
     public static void main(String[] args) {
 
-        try{
-            TTransport transport;
+        TTransport transport = null;
+        try {
 
             transport = new TSocket("localhost", 9090);
-            transport.open();
-
-            //TProtocol protocol = new TBinaryProtocol(transport);
             TProtocol protocol = new TBinaryProtocol(transport, true, true);
-            //synCalc1 = new Calculator.Client(new TMultiplexedProtocol(protocol, "S1"));
-            //AccountCreator.Client client = new AccountCreator.Client(protocol);
-            AccountCreator.Client client1 = new AccountCreator.Client(
+
+            AccountCreator.Client service1 = new AccountCreator.Client(
                     new TMultiplexedProtocol(protocol, "AccountCreator"));
-            StandardAccountsService.Client client2 = new StandardAccountsService.Client(
+            StandardAccountsService.Client service2 = new StandardAccountsService.Client(
                     new TMultiplexedProtocol(protocol, "StandardAccountService"));
-            PremiumAccountService.Client client3 = new PremiumAccountService.Client(
+            PremiumAccountService.Client service3 = new PremiumAccountService.Client(
                     new TMultiplexedProtocol(protocol, "PremiumAccountService"));
+
+            transport.open();
 
             String name = "Kinga";
             String surname = "Nowak";
-            long PESEL = 96061956411L;
-            int minimalEarnings = 2000;
+            long PESEL = 61061916411L;
+            int minimalEarnings = 4000;
 
-            Person person = new Person(name, surname, PESEL, minimalEarnings); //TODO
-            String GUID = client1.createNewAccount(person);
-            System.out.println("my GUID: " + GUID);
-            double state = client2.getAccountState(GUID);
-            System.out.println("Account state: " + state);
-            //TODO
+            BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
+
+            while(true){
+                try {
+                    System.out.println("CHOOSE SERVICE.\n 1 - create account \n 2 - get account state \n 3 - check credit costs");
+                    System.out.print("----------------------------- \n >");
+                    System.out.flush();
+                    String op = in.readLine();
+                    String GUID = null;
+                    switch (op) {
+                        case "1":
+                            System.out.println("-----------------------------");
+                            System.out.println("~ Welcome to the account creation service ~");
+                            System.out.print("Enter name.\n>");
+                            System.out.flush();
+                            name = in.readLine();
+                            System.out.print("Enter surname.\n>");
+                            System.out.flush();
+                            surname = in.readLine();
+                            System.out.print("Enter PESEL.\n>");
+                            System.out.flush();
+                            PESEL = Long.parseLong(in.readLine());
+                            System.out.print("Declare minimal earnings.\n>");
+                            System.out.flush();
+                            minimalEarnings = Integer.parseInt(in.readLine());
+                            Person person = new Person(name, surname, PESEL, minimalEarnings); //TODO
+                            String createdGUID = service1.createNewAccount(person);
+                            System.out.println("your GUID number: " + createdGUID);
+                            break;
+                        case "2":
+                            System.out.println("----------------------------- \n >");
+                            System.out.println("~ Welcome to the account state checker service ~");
+                            System.out.print("~ To log in to your account enter valid GUID number. ~ \n >");
+                            System.out.flush();
+                            GUID = in.readLine();
+                            System.out.println("reeceived guid: " + GUID);
+                            Double state = service2.getAccountState(GUID);
+                            System.out.println("Your account state: " + state);
+                            break;
+                        case "3":
+                            System.out.println("-----------------------------");
+                            System.out.println("~ Welcome to the credit costs checker service ~");
+                            System.out.print("~ To log in to your account enter valid GUID number. ~ \n >");
+                            GUID = in.readLine();
+                            System.out.print("Enter start date (format: \"January 2, 2018\")\n >");
+                            String startDate = in.readLine();
+                            System.out.print("Enter end date (format: \"January 2, 2018\")\n >");
+                            String endDate = in.readLine();
+                            Period period = new Period(startDate, endDate);
+                            System.out.print("Enter currency \n >");
+                            String c = in.readLine();
+                            //TODO
+                            CreditCostsResult result = null;
+                            switch (c) {
+                                case "PLN":
+                                    result = service3.creditCosts(GUID, CurrencyType.PLN, period);
+                                    break;
+                                case "EUR":
+                                    result = service3.creditCosts(GUID, CurrencyType.EUR, period);
+                                    break;
+                                case "USD":
+                                    result = service3.creditCosts(GUID, CurrencyType.USD, period);
+                                    break;
+                            }
+                            if(result != null){
+                                System.out.println(result.getInNativeCurrency());
+                                System.out.println(result.getInRequiredCurrency());
+                            }
+
+
+
+                    }
+                } catch (InvalidArguments | IOException e) {
+                    System.err.println(e);
+                }
+            }
+
             //CreditCostsResult costs = client3.creditCosts(GUID, CurrencyType.EUR, new Period("start", "end") );
             //costs.inNative;
             //costs.inRequiredCurrency
 
-            transport.close();
+
 
         } catch (TTransportException e) {
             System.out.println("TTransportException");
@@ -52,6 +124,9 @@ public class Client {
         } catch (TException e) {
             System.out.println("TException");
             e.printStackTrace();
+        }finally {
+            if (transport != null)
+                transport.close();
         }
     }
 }

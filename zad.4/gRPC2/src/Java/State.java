@@ -35,6 +35,7 @@ public class State {
     }
 
     private void seeState(){
+        System.out.println("-----------------");
         for (Long p: people.keySet()){
             String key =p.toString();
             BankClient value = people.get(p);

@@ -47,8 +47,9 @@ message ExchangeArguments {
 }
 
 message CountedExchange {
-    CurrencyType currencyType = 1;
-    uint32 res = 2;
+    CurrencyType from_currencyType = 1;
+    CurrencyType to_currencyType = 2;
+    uint32 res = 3;
 }
 
 service CurrencyExchange {

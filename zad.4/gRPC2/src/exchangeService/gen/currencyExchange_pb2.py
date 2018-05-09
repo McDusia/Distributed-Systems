@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='currencyExchange.proto',
   package='currencyExchange',
   syntax='proto3',
-  serialized_pb=_b('\n\x16\x63urrencyExchange.proto\x12\x10\x63urrencyExchange\"I\n\x11\x45xchangeArguments\x12\x34\n\x0c\x63urrencyType\x18\x01 \x01(\x0e\x32\x1e.currencyExchange.CurrencyType\"T\n\x0f\x43ountedExchange\x12\x34\n\x0c\x63urrencyType\x18\x01 \x01(\x0e\x32\x1e.currencyExchange.CurrencyType\x12\x0b\n\x03res\x18\x02 \x01(\r*)\n\x0c\x43urrencyType\x12\x07\n\x03PLN\x10\x00\x12\x07\n\x03\x45UR\x10\x01\x12\x07\n\x03USD\x10\x02\x32g\n\x10\x43urrencyExchange\x12S\n\x05\x43ount\x12#.currencyExchange.ExchangeArguments\x1a!.currencyExchange.CountedExchange\"\x00\x30\x01\x42\x32\n\x11sr.grpc.generatedB\x15\x43urrencyExchangeProtoP\x01\xa2\x02\x03HLWb\x06proto3')
+  serialized_pb=_b('\n\x16\x63urrencyExchange.proto\x12\x10\x63urrencyExchange\"I\n\x11\x45xchangeArguments\x12\x34\n\x0c\x63urrencyType\x18\x01 \x01(\x0e\x32\x1e.currencyExchange.CurrencyType\"\x92\x01\n\x0f\x43ountedExchange\x12\x39\n\x11\x66rom_currencyType\x18\x01 \x01(\x0e\x32\x1e.currencyExchange.CurrencyType\x12\x37\n\x0fto_currencyType\x18\x02 \x01(\x0e\x32\x1e.currencyExchange.CurrencyType\x12\x0b\n\x03res\x18\x03 \x01(\r*)\n\x0c\x43urrencyType\x12\x07\n\x03PLN\x10\x00\x12\x07\n\x03\x45UR\x10\x01\x12\x07\n\x03USD\x10\x02\x32g\n\x10\x43urrencyExchange\x12S\n\x05\x43ount\x12#.currencyExchange.ExchangeArguments\x1a!.currencyExchange.CountedExchange\"\x00\x30\x01\x42\x1f\x42\x15\x43urrencyExchangeProtoP\x01\xa2\x02\x03HLWb\x06proto3')
 )
 
 _CURRENCYTYPE = _descriptor.EnumDescriptor(
@@ -44,8 +44,8 @@ _CURRENCYTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=205,
-  serialized_end=246,
+  serialized_start=268,
+  serialized_end=309,
 )
 _sym_db.RegisterEnumDescriptor(_CURRENCYTYPE)
 
@@ -95,15 +95,22 @@ _COUNTEDEXCHANGE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='currencyType', full_name='currencyExchange.CountedExchange.currencyType', index=0,
+      name='from_currencyType', full_name='currencyExchange.CountedExchange.from_currencyType', index=0,
       number=1, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='res', full_name='currencyExchange.CountedExchange.res', index=1,
-      number=2, type=13, cpp_type=3, label=1,
+      name='to_currencyType', full_name='currencyExchange.CountedExchange.to_currencyType', index=1,
+      number=2, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='res', full_name='currencyExchange.CountedExchange.res', index=2,
+      number=3, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -120,12 +127,13 @@ _COUNTEDEXCHANGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=119,
-  serialized_end=203,
+  serialized_start=120,
+  serialized_end=266,
 )
 
 _EXCHANGEARGUMENTS.fields_by_name['currencyType'].enum_type = _CURRENCYTYPE
-_COUNTEDEXCHANGE.fields_by_name['currencyType'].enum_type = _CURRENCYTYPE
+_COUNTEDEXCHANGE.fields_by_name['from_currencyType'].enum_type = _CURRENCYTYPE
+_COUNTEDEXCHANGE.fields_by_name['to_currencyType'].enum_type = _CURRENCYTYPE
 DESCRIPTOR.message_types_by_name['ExchangeArguments'] = _EXCHANGEARGUMENTS
 DESCRIPTOR.message_types_by_name['CountedExchange'] = _COUNTEDEXCHANGE
 DESCRIPTOR.enum_types_by_name['CurrencyType'] = _CURRENCYTYPE
@@ -147,7 +155,7 @@ _sym_db.RegisterMessage(CountedExchange)
 
 
 DESCRIPTOR.has_options = True
-DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n\021sr.grpc.generatedB\025CurrencyExchangeProtoP\001\242\002\003HLW'))
+DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('B\025CurrencyExchangeProtoP\001\242\002\003HLW'))
 
 _CURRENCYEXCHANGE = _descriptor.ServiceDescriptor(
   name='CurrencyExchange',
@@ -155,8 +163,8 @@ _CURRENCYEXCHANGE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=248,
-  serialized_end=351,
+  serialized_start=311,
+  serialized_end=414,
   methods=[
   _descriptor.MethodDescriptor(
     name='Count',

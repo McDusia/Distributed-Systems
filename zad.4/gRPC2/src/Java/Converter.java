@@ -1,15 +1,17 @@
 package Java;
 
-import Java.currencyExchange.CountedExchange;
-import Java.currencyExchange.CurrencyExchangeGrpc;
-import Java.currencyExchange.CurrencyType;
-import Java.currencyExchange.ExchangeArguments;
+import currencyExchange.CountedExchange;
+import currencyExchange.CurrencyExchangeGrpc;
+import currencyExchange.CurrencyType;
+import currencyExchange.ExchangeArguments;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -19,98 +21,24 @@ public class Converter implements Runnable {
 
     private final ManagedChannel channel;
     private final CurrencyExchangeGrpc.CurrencyExchangeBlockingStub curBlockingStub;
-    private final CurrencyExchangeGrpc.CurrencyExchangeStub curNonBlockingStub;
+    private CurrencyType nativeCurrencyType;
+    //conversion from currencyType to KEY of map : VALUE od map
+    private Map<CurrencyType, Double> exchangeRate = new HashMap<>();
 
 
-    Converter(String host, int port)
+    Converter(String host, int port, CurrencyType currencyType)
     {
         channel = ManagedChannelBuilder.forAddress(host, port)
                 .usePlaintext()
                 .build();
 
         curBlockingStub = CurrencyExchangeGrpc.newBlockingStub(channel);
-        curNonBlockingStub = CurrencyExchangeGrpc.newStub(channel);
-    }
-
-    //public static void main(String[] args) throws Exception
-    //{
-
-    //}
-
-
-
-
-    private void getCurrencyExchange() throws InterruptedException
-    {
-        try {
-            String line = null;
-            java.io.BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
-            do
-            {
-                try
-                {
-                    System.out.print("> ");
-                    System.out.flush();
-                    line = in.readLine();
-                    if (line == null)
-                    {
-                        break;
-                    }
-                    if(line.equals("change"))
-                    {
-                        CurrencyType currencyType = CurrencyType.PLN;
-                        ExchangeArguments request = ExchangeArguments.newBuilder().setCurrencyType(currencyType).build();
-                        Iterator<CountedExchange> result;// = curBlockingStub.count(request);
-                        try{
-                            result = curBlockingStub.count(request);
-                            while(result.hasNext()){
-                                CountedExchange c = result.next();
-                                System.out.println(c.getCurrencyTypeValue());
-                                System.out.println(c.getRes()+ "\n");
-                            }
-                        } catch (StatusRuntimeException e) {
-                            logger.warning("RPC failed");
-                        }
-
-
-
-                        /*StreamObserver<CountedExchange> responseObserver = new StreamObserver<CountedExchange>()
-                        {
-                            int count = -1;
-                            @Override
-                            public void onNext(CountedExchange result)
-                            {
-                                //tylko jeden wynik
-                                count = result.getRes();
-                            }
-
-                            @Override
-                            public void onError(Throwable t)
-                            {
-                                System.out.println("RPC ERROR");
-                            }
-
-                            @Override
-                            public void onCompleted()
-                            { System.out.println("Result received: converted " + count); }
-                        };*/
-                    }
-                }
-                catch (java.io.IOException ex)
-                {
-                    System.err.println(ex);
-                }
-            }
-            while (!line.equals("exit"));
-        } finally {
-            shutdown();
-        }
+        //curNonBlockingStub = CurrencyExchangeGrpc.newStub(channel);
+        this.nativeCurrencyType = currencyType;
     }
 
     @Override
     public void run() {
-        //Converter client = new Converter("localhost", 50051);
-
         try {
             getCurrencyExchange();
         } catch (InterruptedException e) {
@@ -118,8 +46,62 @@ public class Converter implements Runnable {
         }
     }
 
+    public Double getActualExchangeRate(CurrencyType toCurrencyType){
+        if(exchangeRate.containsKey(toCurrencyType)){
+            return exchangeRate.get(toCurrencyType);
+        }
+        else {
+            System.out.println("ERROR: Such conversion impossible");
+            return null;
+        }
+    }
+
+    private void getCurrencyExchange() throws InterruptedException
+    {
+        ExchangeArguments request = ExchangeArguments.newBuilder().setCurrencyType(nativeCurrencyType).build();
+        Iterator<CountedExchange> result;
+        try{
+            result = curBlockingStub.count(request);
+            while(result.hasNext()){
+                CountedExchange countedExchangeRate = result.next();
+                updateExchangeRates(countedExchangeRate.getFromCurrencyType(),
+                        countedExchangeRate.getToCurrencyType(), countedExchangeRate.getRes());
+                seeMap();
+
+                /*System.out.println(countedExchangeRate.getFromCurrencyTypeValue());
+                System.out.println(countedExchangeRate.getToCurrencyTypeValue());
+                System.out.println(countedExchangeRate.getToCurrencyType());
+                System.out.println(countedExchangeRate.getRes()+ "\n");*/
+            }
+        } catch (StatusRuntimeException e) {
+            logger.warning("RPC failed");
+            shutdown();
+        }
+    }
+
+    private void updateExchangeRates(CurrencyType fromCurrencyType, CurrencyType toCurrencyType, int value){
+        if(fromCurrencyType == nativeCurrencyType) {
+            Double valueToInsert = (double)value/10000;
+            if(exchangeRate.containsKey(toCurrencyType)) {
+                exchangeRate.replace(toCurrencyType, valueToInsert);
+            } else {
+                exchangeRate.put(toCurrencyType, valueToInsert);
+            }
+        }
+    }
+
     private void shutdown() throws InterruptedException {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    private void seeMap(){
+        System.out.println("--------");
+        for (Map.Entry<CurrencyType, Double> entry : exchangeRate.entrySet())
+        {
+
+            System.out.println("Conversion: "+ nativeCurrencyType.getValueDescriptor()+ " -> " + entry.getKey() + " / " + entry.getValue());
+        }
+        System.out.println("--------");
     }
 }
 

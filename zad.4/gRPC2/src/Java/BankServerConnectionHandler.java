@@ -15,8 +15,11 @@ import thrift.bank.StandardAccountsService;
 public class BankServerConnectionHandler implements Runnable {
 
     private State state;
-    BankServerConnectionHandler(State state){
+    private Converter converter;
+    BankServerConnectionHandler(State state, Converter converter){
+
         this.state = state;
+        this.converter = converter;
     }
 
     //AccountCreator.Processor<AccountCreatorHandler>
@@ -59,7 +62,7 @@ public class BankServerConnectionHandler implements Runnable {
 
         processor1.registerProcessor(
                 "PremiumAccountService",
-                new PremiumAccountService.Processor<>(new PremiumAccountServiceHandler(state)));
+                new PremiumAccountService.Processor<>(new PremiumAccountServiceHandler(state, converter)));
 
         //new AccountCreator.Processor<>(new AccountCreatorHandler(state))
         start(processor1);
