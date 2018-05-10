@@ -16,27 +16,20 @@ public class BankServerConnectionHandler implements Runnable {
 
     private State state;
     private Converter converter;
-    BankServerConnectionHandler(State state, Converter converter){
+    private int portNumber;
 
+    BankServerConnectionHandler(State state, Converter converter, int portNumber){
         this.state = state;
         this.converter = converter;
+        this.portNumber = portNumber;
     }
 
-    //AccountCreator.Processor<AccountCreatorHandler>
-    public static void start(TMultiplexedProcessor processor) {
+    public static void start(TMultiplexedProcessor processor, int portNumber) {
         try {
-            TServerTransport serverTransport = new TServerSocket(9090);
-
-            //TServer server = new TSimpleServer(
-            //      new TServer.Args(serverTransport).processor(processor));
-
-            //Use this for a multithreaded server
-            //TServer server = new TThreadPoolServer(new
-              //      TThreadPoolServer.Args(serverTransport).processor(processor));
-
+            TServerTransport serverTransport = new TServerSocket(portNumber);
             TProtocolFactory protocolFactory = new TBinaryProtocol.Factory();
-            //TServer server = new TSimpleServer(new TServer.Args(serverTransport).protocolFactory(protocolFactory).processor(processor));
-            //wielowątkowy serwer
+
+            //multithreaded server
             TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport)
                     .protocolFactory(protocolFactory).processor(processor));
 
@@ -64,7 +57,6 @@ public class BankServerConnectionHandler implements Runnable {
                 "PremiumAccountService",
                 new PremiumAccountService.Processor<>(new PremiumAccountServiceHandler(state, converter)));
 
-        //new AccountCreator.Processor<>(new AccountCreatorHandler(state))
-        start(processor1);
+        start(processor1, portNumber);
     }
 }

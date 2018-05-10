@@ -17,6 +17,15 @@ public class BankServer {
         String wantedCurrencyType = null;
         CurrencyType currencyType = null;
         BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
+        int portNumber = 9090;
+        try {
+            System.out.print("Enter port number \n>");
+            portNumber = Integer.parseInt(in.readLine());
+        } catch (IOException e) {
+            System.out.println("IOException");
+            e.printStackTrace();
+        }
+
         while(currencyType == null)
         {
             System.out.print("Enter currency interesting for this bank.\n>");
@@ -41,7 +50,8 @@ public class BankServer {
         Converter converter = new Converter("localhost", 50051, currencyType);
         executor.execute(converter);
 
-        Runnable handler = new BankServerConnectionHandler(state, converter);
+        //int portNumber = 9090;
+        Runnable handler = new BankServerConnectionHandler(state, converter, portNumber);
         executor.execute(handler);
     }
 }

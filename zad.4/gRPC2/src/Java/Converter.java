@@ -33,7 +33,6 @@ public class Converter implements Runnable {
                 .build();
 
         curBlockingStub = CurrencyExchangeGrpc.newBlockingStub(channel);
-        //curNonBlockingStub = CurrencyExchangeGrpc.newStub(channel);
         this.nativeCurrencyType = currencyType;
     }
 
@@ -67,11 +66,6 @@ public class Converter implements Runnable {
                 updateExchangeRates(countedExchangeRate.getFromCurrencyType(),
                         countedExchangeRate.getToCurrencyType(), countedExchangeRate.getRes());
                 seeMap();
-
-                /*System.out.println(countedExchangeRate.getFromCurrencyTypeValue());
-                System.out.println(countedExchangeRate.getToCurrencyTypeValue());
-                System.out.println(countedExchangeRate.getToCurrencyType());
-                System.out.println(countedExchangeRate.getRes()+ "\n");*/
             }
         } catch (StatusRuntimeException e) {
             logger.warning("RPC failed");
@@ -99,7 +93,8 @@ public class Converter implements Runnable {
         for (Map.Entry<CurrencyType, Double> entry : exchangeRate.entrySet())
         {
 
-            System.out.println("Conversion: "+ nativeCurrencyType.getValueDescriptor()+ " -> " + entry.getKey() + " / " + entry.getValue());
+            System.out.println("Conversion: "+ nativeCurrencyType.getValueDescriptor()+ " -> "
+                    + entry.getKey() + " / " + entry.getValue());
         }
         System.out.println("--------");
     }

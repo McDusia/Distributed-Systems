@@ -18,7 +18,11 @@ public class Client {
         TTransport transport = null;
         try {
 
-            transport = new TSocket("localhost", 9090);
+            BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
+            System.out.print("Enter port number to get connection with bank\n>");
+            int portNumber = Integer.parseInt(in.readLine());
+
+            transport = new TSocket("localhost", portNumber);
             TProtocol protocol = new TBinaryProtocol(transport, true, true);
 
             AccountCreator.Client service1 = new AccountCreator.Client(
@@ -34,8 +38,6 @@ public class Client {
             String surname = "Nowak";
             long PESEL = 61061916411L;
             int minimalEarnings = 4000;
-
-            BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
 
             while(true){
                 try {
@@ -60,7 +62,7 @@ public class Client {
                             System.out.print("Declare minimal earnings.\n>");
                             System.out.flush();
                             minimalEarnings = Integer.parseInt(in.readLine());
-                            Person person = new Person(name, surname, PESEL, minimalEarnings); //TODO
+                            Person person = new Person(name, surname, PESEL, minimalEarnings);
                             String createdGUID = service1.createNewAccount(person);
                             System.out.println("your GUID number: " + createdGUID);
                             break;
@@ -86,7 +88,7 @@ public class Client {
                             Period period = new Period(startDate, endDate);
                             System.out.print("Enter currency \n >");
                             String c = in.readLine();
-                            //TODO
+
                             CreditCostsResult result = null;
                             switch (c) {
                                 case "PLN":
@@ -103,30 +105,29 @@ public class Client {
                                 System.out.println(result.getInNativeCurrency());
                                 System.out.println(result.getInRequiredCurrency());
                             }
-
-
-
+                            break;
+                        default:
+                            System.out.println("No such option");
                     }
                 } catch (InvalidArguments | IOException e) {
                     System.err.println(e);
                 }
             }
 
-            //CreditCostsResult costs = client3.creditCosts(GUID, CurrencyType.EUR, new Period("start", "end") );
-            //costs.inNative;
-            //costs.inRequiredCurrency
-
-
-
         } catch (TTransportException e) {
             System.out.println("TTransportException");
+            System.out.println("Check port");
             e.printStackTrace();
         } catch (TException e) {
             System.out.println("TException");
             e.printStackTrace();
-        }finally {
-            if (transport != null)
+        } catch (IOException e) {
+            System.out.println("IOException");
+            e.printStackTrace();
+        } finally {
+            if (transport != null){
                 transport.close();
+            }
         }
     }
 }

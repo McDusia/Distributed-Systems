@@ -1,6 +1,5 @@
 package Java;
 
-import org.apache.thrift.TException;
 import thrift.bank.*;
 
 import java.text.DateFormat;
@@ -30,18 +29,13 @@ public class PremiumAccountServiceHandler extends StandardAccountServiceHandler 
         long days = getDaysAmount(period);
         currencyExchange.CurrencyType currencyType = convertToGRPCCurrencyType(currency);
         Double exchangeRate = converter.getActualExchangeRate(currencyType);
-        //sth better? TODO
-
+        //there could be better credit costs counting algorithm
         double inNativeCurrency = days * 1.0;
         double inForeignCurrency = (exchangeRate * days);
 
         CreditCostsResult result = new CreditCostsResult(inForeignCurrency, inNativeCurrency);
-        double r1 = result.inRequiredCurrency;
-        double r2 = result.inNativeCurrency;
         System.out.println(result);
         return result;
-        //double nativeCurrency =  value *  getPeriosMonthsAmount(period)/10;
-        //double forignCurrency = nativeCurrency * currentBankData().getCurrencyValue(currency_type);
 
     }
 
