@@ -1,0 +1,22 @@
+grpc
+kompilator: protoc-3.5.1-win32 (w projekcie po prostu protoc.exe)
+plugin: protoc-gen-grpc-java-1.11.0-windows-x86_64.exe
+Java 1.8
+
+komenda kompiluj¹ca interfejs currencyExchange.proto:
+
+.\protoc.exe --java_out=. --plugin=protoc-gen-grpc-java=protoc-gen-grpc-java-1.11.0-windo
+ws-x86_64.exe  --grpc-java_out=.  currencyExchange.proto
+
+albo (do innego katalogu)
+
+.\protoc.exe --java_out=generated --plugin=protoc-gen-grpc-java=protoc-gen-grpc-java-1.11.0-windows-x86_64.exe  --grpc-java_out=generated  currencyExchange.proto
+
+> potrzebne biblioteki:
+io.grpc:grpc-protobuf:1.11.0
+io.grpc:grpc-stub:1.11.0
+io.grpc:grpc-netty:1.11.0
+
+protoc-gen-grpc-java-1.11... - PLUGIN
+ze strony: https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/1.11.0/
+protoc-3.5.1-win32 - BIBLIOTEKA
