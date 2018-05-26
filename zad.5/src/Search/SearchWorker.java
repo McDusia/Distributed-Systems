@@ -1,3 +1,5 @@
+package Search;
+
 import akka.actor.AbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
@@ -18,7 +20,7 @@ public class SearchWorker extends AbstractActor{
     public AbstractActor.Receive createReceive() {
         return receiveBuilder()
                 .match(String.class, s -> {
-                    System.out.println("SearchWorker "+ s);
+                    System.out.println("Search.SearchWorker "+ s);
                     String result = search(s);
                     System.out.println("Result in worker"+ result);
                     //odesłanie do rodzica
@@ -30,7 +32,7 @@ public class SearchWorker extends AbstractActor{
     }
 
     private String search(String request){
-        System.out.println("search in SearchWorker");
+        System.out.println("search in Search.SearchWorker");
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(file));

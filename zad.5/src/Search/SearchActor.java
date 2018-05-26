@@ -1,3 +1,6 @@
+package Search;
+
+import Search.SearchWorker;
 import akka.actor.AbstractActor;
 import akka.actor.Props;
 import akka.event.Logging;
@@ -15,13 +18,13 @@ public class SearchActor extends AbstractActor{
                 .match(String.class, s -> {
 
                    if(s.startsWith("result")) {
-                       System.out.println("Result in SearchActor");
+                       System.out.println("Result in Search.SearchActor");
                        if(!s.contains("Failed")){
                            getSender().tell(s, getSelf()); //odesłanie odpowiedzi do klienta?
                        }
                     } else {
 
-                        System.out.println("SearchActor "+ s);
+                        System.out.println("Search.SearchActor "+ s);
                         context().child("worker_1").get().forward(s, getContext());   //zlecenie zadania
                         context().child("worker_2").get().forward(s, getContext());
                     }
