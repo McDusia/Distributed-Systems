@@ -20,6 +20,7 @@ public class Bookstore {
 
         System.out.println("Started. Commands: 'hi', 'm [nb1] [nb2]', 'q'");
 
+        //niepotrzbene to chyba
         // read line & send to actor
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         while (true) {

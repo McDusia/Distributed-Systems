@@ -1,10 +1,11 @@
-package Search;
 
-import Search.SearchWorker;
+
 import akka.actor.AbstractActor;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+
+import java.util.concurrent.CompletableFuture;
 
 
 public class SearchActor extends AbstractActor{
@@ -15,17 +16,16 @@ public class SearchActor extends AbstractActor{
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-                .match(String.class, s -> {
-
-                   if(s.startsWith("result")) {
-                       System.out.println("Result in Search.SearchActor");
-                       if(!s.contains("Failed")){
-                           getSender().tell(s, getSelf()); //odesłanie odpowiedzi do klienta?
-                       }
+                .match(Message.class, s -> {
+                    String type = s.getType();
+                    String msg = s.getMessage();
+                    if(type.equals("result")) {
+                        if(!msg.contains("Failed")){
+                            getSender().tell(s, getSelf()); //send respond to client
+                        }
                     } else {
-
-                        System.out.println("Search.SearchActor "+ s);
-                        context().child("worker_1").get().forward(s, getContext());   //zlecenie zadania
+                        //CompletableFuture<Message> future1 = ask(context().child("worker_1").get())
+                        context().child("worker_1").get().forward(s, getContext());   //commission to workers
                         context().child("worker_2").get().forward(s, getContext());
                     }
                 })

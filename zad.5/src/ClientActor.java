@@ -2,8 +2,6 @@ import akka.actor.AbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 
 public class ClientActor extends AbstractActor{
     private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);

@@ -1,4 +1,4 @@
-import Search.SearchActor;
+
 import akka.actor.AbstractActor;
 import akka.actor.Props;
 import akka.event.Logging;
@@ -14,7 +14,6 @@ public class BookstoreActor  extends AbstractActor{
         String clientPath = "akka.tcp://client_system@127.0.0.1:2552/user/clientActor";
         return receiveBuilder()
                 .match(Message.class, s -> {
-                    Message msg = s;
                     String type = s.getType();
                     String bookTitle = s.getMessage();
 
@@ -23,13 +22,13 @@ public class BookstoreActor  extends AbstractActor{
                     }
                     else if(type.equals("search")){
                         System.out.println("TU");
-                        context().child("search").get().forward(bookTitle, getContext());
+                        context().child("search").get().forward(s, getContext());
                     }
                     else if(type.equals("order")){
-                        context().child("order").get().tell(bookTitle, getSelf());
+                        context().child("order").get().forward(bookTitle, getContext());
                     }
                     else if(type.equals("stream")){
-                        context().child("stream").get().tell(bookTitle, getSelf());
+                        context().child("stream").get().forward(bookTitle, getContext());
                     }
                 })
                 .matchAny(o -> {
