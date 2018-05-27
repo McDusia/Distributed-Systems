@@ -1,5 +1,6 @@
 
 
+import Client.Message;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.event.Logging;

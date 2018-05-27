@@ -15,7 +15,7 @@ public class StreamActor extends AbstractActor{
 
     StreamActor() {
         try{
-            FileWriter fw = new FileWriter("src\\orders", true);
+            FileWriter fw = new FileWriter("resources\\orders", true);
             BufferedWriter bw = new BufferedWriter(fw);
             this.out = new PrintWriter(bw);
         } catch (IOException e) {

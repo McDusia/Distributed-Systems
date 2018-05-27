@@ -1,5 +1,5 @@
+import Client.Message;
 import akka.actor.AbstractActor;
-import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 
@@ -37,7 +37,7 @@ public class OrderActor extends AbstractActor{
     private boolean orderBook(String bookTitle) throws Exception {
         s.down();
         try{
-            FileWriter fw = new FileWriter("src\\orders", true);
+            FileWriter fw = new FileWriter("resources\\orders", true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out2 = new PrintWriter(bw);
             out2.println(bookTitle);

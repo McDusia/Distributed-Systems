@@ -1,4 +1,5 @@
 
+import Client.Message;
 import akka.actor.AbstractActor;
 import akka.actor.AllForOneStrategy;
 import akka.actor.Props;
@@ -9,7 +10,6 @@ import akka.japi.pf.DeciderBuilder;
 import scala.concurrent.duration.Duration;
 
 import static akka.actor.SupervisorStrategy.restart;
-import static akka.actor.SupervisorStrategy.resume;
 
 public class BookstoreActor  extends AbstractActor{
 

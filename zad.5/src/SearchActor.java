@@ -1,5 +1,6 @@
 
 
+import Client.Message;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -12,7 +13,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static akka.pattern.PatternsCS.ask;
-import static akka.pattern.PatternsCS.pipe;
 
 
 public class SearchActor extends AbstractActor{
@@ -88,8 +88,8 @@ public class SearchActor extends AbstractActor{
 
     @Override
     public void preStart() throws Exception {
-        String path1 = "src\\DB_1";
-        String path2 = "src\\DB_2";
+        String path1 = "resources\\DB_1";
+        String path2 = "resources\\DB_2";
         context().actorOf(Props.create(SearchWorker.class, path1), "worker_1");
         context().actorOf(Props.create(SearchWorker.class, path2), "worker_2");
     }

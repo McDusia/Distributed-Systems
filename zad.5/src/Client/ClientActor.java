@@ -1,3 +1,5 @@
+package Client;
+
 import akka.actor.AbstractActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;

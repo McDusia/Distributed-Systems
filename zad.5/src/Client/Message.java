@@ -1,3 +1,5 @@
+package Client;
+
 import akka.actor.ActorRef;
 
 import java.io.Serializable;
