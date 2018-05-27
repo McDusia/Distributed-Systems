@@ -1,8 +1,15 @@
 
 import akka.actor.AbstractActor;
+import akka.actor.AllForOneStrategy;
 import akka.actor.Props;
+import akka.actor.SupervisorStrategy;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.japi.pf.DeciderBuilder;
+import scala.concurrent.duration.Duration;
+
+import static akka.actor.SupervisorStrategy.restart;
+import static akka.actor.SupervisorStrategy.resume;
 
 public class BookstoreActor  extends AbstractActor{
 
@@ -45,6 +52,17 @@ public class BookstoreActor  extends AbstractActor{
         context().actorOf(Props.create(SearchActor.class), "search");
         context().actorOf(props3, "order");
         context().actorOf(Props.create(StreamActor.class), "stream");
+    }
+
+    private static SupervisorStrategy allForOnestrategy
+            = new AllForOneStrategy(10, Duration.create("1 minute"), DeciderBuilder.
+            //match(  ArithmeticException.class, o  -> resume()).
+            matchAny(o -> restart()).
+            build());
+
+    @Override
+    public SupervisorStrategy supervisorStrategy() {
+        return allForOnestrategy;
     }
 
 }

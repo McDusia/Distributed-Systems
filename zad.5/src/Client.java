@@ -29,7 +29,6 @@ public class Client {
             }
             String type = line.substring(0, line.indexOf(' '));
             String bookTitle = line.substring(line.indexOf(' ') + 1);
-            System.out.println(type+" "+bookTitle);
             Message msg = new Message(type, bookTitle);
             clientActor.tell(msg, null);
         }

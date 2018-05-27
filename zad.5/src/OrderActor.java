@@ -36,14 +36,19 @@ public class OrderActor extends AbstractActor{
     private boolean orderBook(String bookTitle) throws Exception {
         s.down();
         try{
-            FileWriter fw = new FileWriter("src\\orders.txt", true);
+            FileWriter fw = new FileWriter("src\\orders", true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter out2 = new PrintWriter(bw);
             out2.println(bookTitle);
-            s.up();
+            bw.close();
+            fw.close();
+            System.out.println("Order submitted");
             return true;
         } catch (IOException e) {
             e.printStackTrace();
+
+        } finally {
+            s.up();
         }
        return false;
     }

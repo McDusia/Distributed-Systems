@@ -12,20 +12,18 @@ public class ClientActor extends AbstractActor{
         System.out.println(getSelf().path());
         return receiveBuilder()
                 .match(Message.class, s -> {
-                    Message msg = s;
                     String type = s.getType();
-                    String bookTitle = s.getMessage();
-                    System.out.println(type+" "+bookTitle);
                     if(type.equals("search") | type.equals("order") | type.equals("stream")) {
-                        System.out.println("clientActor received: "+ s);
-                        getContext().actorSelection(bookstorePath).tell(msg, getSelf());
+                        getContext().actorSelection(bookstorePath).tell(s, getSelf());
+                    } else if (type.equals("result")){
+                        System.out.println(s.getMessage());
                     } else {
-                        System.out.println("clientActor received: "+ s);
+                        System.out.println(s.getMessage());
                     }
-
                 })
                 .matchAny(o -> {
-                    log.info("received unknown message");}
+                    log.info("received unknown message");
+                    System.out.println(o);}
                 )
                 .build();
     }

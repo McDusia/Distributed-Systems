@@ -1,6 +1,7 @@
 
 
 import akka.actor.AbstractActor;
+import akka.actor.ActorRef;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 
@@ -24,9 +25,14 @@ public class SearchWorker extends AbstractActor{
                     String bookTitle = s.getMessage();
                     String result = search(bookTitle);
                     //------ send back to parent
+                    ActorRef client = s.getClient();
                     Message msg = new Message("result", result);
-                    getContext().parent().forward(msg, getContext());
+                    msg.setClient(client);
 
+                    if(!result.contains("Exception")){
+                        getContext().parent().forward(msg, getContext());
+                        getSender().tell(msg, getSelf());
+                    }
                 })
                 .matchAny(o -> log.info("received unknown message"))
                 .build();
@@ -51,6 +57,6 @@ public class SearchWorker extends AbstractActor{
             System.out.println("IOException ex");
             e.printStackTrace();
         }
-        return "Failed";
+        return "Exception";
     }
 }

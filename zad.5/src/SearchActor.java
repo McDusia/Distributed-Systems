@@ -1,32 +1,86 @@
 
 
 import akka.actor.AbstractActor;
+import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.util.Timeout;
+import scala.concurrent.duration.Duration;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+import static akka.pattern.PatternsCS.ask;
+import static akka.pattern.PatternsCS.pipe;
 
 
 public class SearchActor extends AbstractActor{
 
     private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
-
+    private ActorRef client;
 
     @Override
     public Receive createReceive() {
         return receiveBuilder()
                 .match(Message.class, s -> {
+
                     String type = s.getType();
                     String msg = s.getMessage();
+
                     if(type.equals("result")) {
                         if(!msg.contains("Failed")){
-                            getSender().tell(s, getSelf()); //send respond to client
+                            ActorRef client  = s.getClient();
+                            client.tell(s, getSelf()); //send respond to client
                         }
                     } else {
-                        //CompletableFuture<Message> future1 = ask(context().child("worker_1").get())
-                        context().child("worker_1").get().forward(s, getContext());   //commission to workers
-                        context().child("worker_2").get().forward(s, getContext());
+                        Timeout t = new Timeout(Duration.create(5, TimeUnit.SECONDS));
+                        client = getSender();
+                        s.setClient(getSender());
+                        System.out.println("sender before send"+s.getClient());
+                        CompletableFuture<Object> future1 =
+                                ask(context().child("worker_1").get(), s, t).toCompletableFuture();
+
+                        CompletableFuture<Object> future2 =
+                                ask(context().child("worker_2").get(), s, t).toCompletableFuture();
+
+                        CompletableFuture<String> transformed =
+                                CompletableFuture.allOf(future1, future2)
+                                .thenApply(v -> {
+                                    Message r1 = (Message) future1.join();
+                                    Message r2 = (Message) future2.join();
+
+                                    if(r1.getMessage().contains("Failed") && r2.getMessage().contains("Failed")){
+                                        ActorRef client = r1.getClient();
+                                        Message respond = new Message("Failure", "No such book");
+                                        client.tell(respond, getSelf());
+                                    }
+                                    return "";
+                                })
+                                .exceptionally(v -> {
+                                    System.out.println("Exceptionally");
+                                    if(!future1.isCompletedExceptionally()) {
+                                        Message r1 = (Message) future1.join();
+                                        String r = r1.getMessage();
+                                        if(r.contains("Failed")){
+                                            Message respond = new Message("Failure", "Problem with database");
+                                            client.tell(respond, getSelf());
+                                        }
+                                    }
+                                    else if(!future2.isCompletedExceptionally()) {
+                                        Message r1 = (Message) future2.join();
+                                        String r = r1.getMessage();
+                                        if(r.contains("Failed")){
+                                            Message respond = new Message("Failure", "Problem with database");
+                                            client.tell(respond, getSelf());
+                                        }
+                                    }
+                                    if(future1.isCompletedExceptionally() && future2.isCompletedExceptionally()){
+                                        Message respond = new Message("Failure", "Problem with database");
+                                        client.tell(respond, getSelf());
+                                    }
+                                    return "";
+                                });
                     }
                 })
                 .matchAny(o -> log.info("received unknown message"))
