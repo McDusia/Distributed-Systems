@@ -18,22 +18,17 @@ public class Bookstore {
         final ActorSystem system = ActorSystem.create("bookstore_system", config);
         final ActorRef bookstoreActor = system.actorOf(Props.create(BookstoreActor.class), "bookstoreActor");
 
-        System.out.println("Started. Commands: 'hi', 'm [nb1] [nb2]', 'q'");
+        System.out.println("------ Started. enter 'q' to quit ------");
 
-        //niepotrzbene to chyba
-        // read line & send to actor
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
             String line = br.readLine();
             if (line.equals("q")) {
                 break;
             }
-            //przesyłanie wiadomości
-            bookstoreActor.tell(line, null);     // send message to bookstore actor
         }
 
         // finish
         system.terminate();
     }
-
 }

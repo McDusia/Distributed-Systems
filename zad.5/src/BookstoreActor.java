@@ -28,13 +28,15 @@ public class BookstoreActor  extends AbstractActor{
                         getContext().actorSelection(clientPath).tell(s, getSelf());
                     }
                     else if(type.equals("search")){
-                        System.out.println("TU");
+                        System.out.println("search request");
                         context().child("search").get().forward(s, getContext());
                     }
                     else if(type.equals("order")){
+                        System.out.println("order request");
                         context().child("order").get().forward(bookTitle, getContext());
                     }
                     else if(type.equals("stream")){
+                        System.out.println("stream request");
                         context().child("stream").get().forward(bookTitle, getContext());
                     }
                 })

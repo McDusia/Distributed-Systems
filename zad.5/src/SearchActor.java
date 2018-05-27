@@ -36,8 +36,7 @@ public class SearchActor extends AbstractActor{
                     } else {
                         Timeout t = new Timeout(Duration.create(5, TimeUnit.SECONDS));
                         client = getSender();
-                        s.setClient(getSender());
-                        System.out.println("sender before send"+s.getClient());
+                        s.setClient(client);
                         CompletableFuture<Object> future1 =
                                 ask(context().child("worker_1").get(), s, t).toCompletableFuture();
 

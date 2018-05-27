@@ -22,6 +22,9 @@ public class Client {
 
         // interaction
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.println("Started. Commands: 'search <bookTitle>', 'order <bookTitle>', 'stream <bookTitle>'");
+
         while (true) {
             String line = br.readLine();
             if (line.equals("q")) {

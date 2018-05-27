@@ -25,7 +25,8 @@ public class OrderActor extends AbstractActor{
         return receiveBuilder()
                 .match(String.class, s -> {
                     if(orderBook(s)) {
-                        getSender().tell("order submitted", getSelf());
+                        Message msg = new Message("result", "order submitted");
+                        getSender().tell(msg, getSelf());
                     }
                 })
                 .matchAny(o -> log.info("received unknown message"))
