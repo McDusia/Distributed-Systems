@@ -19,6 +19,8 @@ public class ClientActor extends AbstractActor{
                         getContext().actorSelection(bookstorePath).tell(s, getSelf());
                     } else if (type.equals("result")){
                         System.out.println(s.getMessage());
+                    } else if (type.equals("stream")){
+                        System.out.println(s.getMessage());
                     } else {
                         System.out.println(s.getMessage());
                     }

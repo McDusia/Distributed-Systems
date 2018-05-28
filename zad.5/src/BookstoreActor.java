@@ -36,8 +36,9 @@ public class BookstoreActor  extends AbstractActor{
                         context().child("order").get().forward(bookTitle, getContext());
                     }
                     else if(type.equals("stream")){
-                        System.out.println("stream request");
-                        context().child("stream").get().forward(bookTitle, getContext());
+                        System.out.println("stream request in Bookstore");
+
+                        context().child("stream").get().forward(s, getContext());
                     }
                 })
                 .matchAny(o -> {
