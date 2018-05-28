@@ -1,17 +1,18 @@
 
 
 import Client.Message;
-import akka.actor.AbstractActor;
-import akka.actor.ActorRef;
-import akka.actor.Props;
+import akka.actor.*;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import akka.japi.pf.DeciderBuilder;
 import akka.util.Timeout;
 import scala.concurrent.duration.Duration;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import static akka.actor.SupervisorStrategy.stop;
+import static akka.actor.SupervisorStrategy.resume;
 import static akka.pattern.PatternsCS.ask;
 
 
@@ -94,7 +95,15 @@ public class SearchActor extends AbstractActor{
         context().actorOf(Props.create(SearchWorker.class, path2), "worker_2");
     }
 
+    private static SupervisorStrategy oneForOneStrategy
+            = new OneForOneStrategy(10, Duration.create("1 minute"), DeciderBuilder.
+            matchAny(o -> stop()).
+            build());
 
+    @Override
+    public SupervisorStrategy supervisorStrategy() {
+        return oneForOneStrategy;
+    }
 
 
 }

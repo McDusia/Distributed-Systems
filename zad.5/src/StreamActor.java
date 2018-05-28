@@ -36,7 +36,7 @@ public class StreamActor extends AbstractActor{
     public Receive createReceive() {
         return receiveBuilder()
                 .match(Message.class, msg -> {
-                    
+
                     String bookTitle = msg.getMessage();
 
                     log.info("stream request: "+bookTitle);

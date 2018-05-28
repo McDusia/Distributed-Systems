@@ -1,15 +1,13 @@
 
 import Client.Message;
-import akka.actor.AbstractActor;
-import akka.actor.AllForOneStrategy;
-import akka.actor.Props;
-import akka.actor.SupervisorStrategy;
+import akka.actor.*;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.DeciderBuilder;
 import scala.concurrent.duration.Duration;
 
 import static akka.actor.SupervisorStrategy.restart;
+import static akka.actor.SupervisorStrategy.resume;
 
 public class BookstoreActor  extends AbstractActor{
 
@@ -17,7 +15,6 @@ public class BookstoreActor  extends AbstractActor{
 
     @Override
     public AbstractActor.Receive createReceive() {
-        String path = "akka.tcp://bookstore_system@127.0.0.1:3552/user/bookstoreActor";
         String clientPath = "akka.tcp://client_system@127.0.0.1:2552/user/clientActor";
         return receiveBuilder()
                 .match(Message.class, s -> {
@@ -57,15 +54,13 @@ public class BookstoreActor  extends AbstractActor{
         context().actorOf(Props.create(StreamActor.class), "stream");
     }
 
-    private static SupervisorStrategy allForOnestrategy
-            = new AllForOneStrategy(10, Duration.create("1 minute"), DeciderBuilder.
-            //match(  ArithmeticException.class, o  -> resume()).
-            matchAny(o -> restart()).
+    private static SupervisorStrategy oneForOneStrategy
+            = new OneForOneStrategy(10, Duration.create("1 minute"), DeciderBuilder.
+            matchAny(o -> resume()).
             build());
-
     @Override
     public SupervisorStrategy supervisorStrategy() {
-        return allForOnestrategy;
+        return oneForOneStrategy;
     }
 
 }
